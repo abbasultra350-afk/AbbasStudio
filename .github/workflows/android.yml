@@ -21,14 +21,12 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Accept SDK licenses and install platform
+        run: |
+          CMDLINE="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$CMDLINE" --licenses > /dev/null
+          "$CMDLINE" "platforms;android-34" "build-tools;34.0.0"
 
-      - name: Install platform and build tools
-        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
-
-      # The wrapper jar is a binary and is not committed to the repo;
-      # fetch the official Gradle 8.10.2 wrapper jar, then build with it.
       - name: Fetch Gradle wrapper jar
         run: |
           curl -sL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.10.2/gradle/wrapper/gradle-wrapper.jar
